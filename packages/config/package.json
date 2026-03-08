@@ -1,0 +1,9 @@
+{
+  "name": "@smart-inbox/config",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./eslint": "./eslint/base.cjs",
+    "./tsconfig": "./tsconfig/base.json"
+  }
+}

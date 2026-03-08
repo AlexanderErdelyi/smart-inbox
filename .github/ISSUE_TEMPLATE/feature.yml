@@ -1,0 +1,48 @@
+name: Feature
+about: Propose or implement a feature
+title: "feat: "
+labels:
+  - type:feature
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user problem are we solving?
+      placeholder: Describe the pain point and who is affected.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What is in scope for this issue?
+      placeholder: List concrete deliverables.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: What must be true to close this issue?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of Scope
+      description: What will not be done in this issue?
+      placeholder: Clarify boundaries to avoid scope creep.
+
+  - type: textarea
+    id: technical_notes
+    attributes:
+      label: Technical Notes
+      description: Optional implementation notes and dependencies.
+      placeholder: Architecture notes, related packages, API/module details.

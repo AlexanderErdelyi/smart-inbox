@@ -1,0 +1,50 @@
+name: Epic
+about: Track a high-level initiative made of multiple child issues
+title: "epic: "
+labels:
+  - type:epic
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: What strategic outcome does this epic deliver?
+      placeholder: Describe the end state.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What areas are covered by this epic?
+      placeholder: API, web, worker, provider-sdk, infra.
+    validations:
+      required: true
+
+  - type: textarea
+    id: child_issues
+    attributes:
+      label: Child Issues
+      description: Track all child issues here.
+      placeholder: |
+        - [ ] #123 Child issue title
+        - [ ] #124 Child issue title
+    validations:
+      required: true
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks
+      description: Main risks or unknowns.
+      placeholder: OAuth scopes, provider limits, schema constraints.
+
+  - type: textarea
+    id: done_definition
+    attributes:
+      label: Definition of Done
+      description: What conditions close this epic?
+      placeholder: All child issues completed and acceptance validated.
+    validations:
+      required: true

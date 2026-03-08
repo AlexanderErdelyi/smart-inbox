@@ -1,7 +1,34 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO="AlexanderErdelyi/smart-inbox"
+if ! command -v gh >/dev/null 2>&1; then
+  echo "Error: GitHub CLI (gh) is required."
+  exit 1
+fi
+
+if ! gh auth status >/dev/null 2>&1; then
+  echo "Error: gh is not authenticated. Run: gh auth login"
+  exit 1
+fi
+
+REPO="${REPO:-$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || true)}"
+if [[ -z "${REPO}" ]]; then
+  echo "Error: Could not determine repository. Set REPO=owner/name."
+  exit 1
+fi
+
+M1_DUE="${M1_DUE:-2026-04-15T23:59:59Z}"
+M2_DUE="${M2_DUE:-2026-05-15T23:59:59Z}"
+M3_DUE="${M3_DUE:-2026-06-15T23:59:59Z}"
+ISSUE_START="${ISSUE_START:-1}"
+ISSUE_END="${ISSUE_END:-18}"
+
+if [[ "$ISSUE_START" -gt "$ISSUE_END" ]]; then
+  echo "Error: ISSUE_START must be <= ISSUE_END."
+  exit 1
+fi
+
+echo "Using repository: $REPO"
 
 ensure_milestone() {
   local title="$1"
@@ -32,27 +59,22 @@ assign_issue_to_milestone() {
   gh issue edit "$issue_number" --repo "$REPO" --milestone "$milestone_title" >/dev/null
 }
 
-M1=$(ensure_milestone "M1 - Gmail MVP" "OAuth, provider connection, initial sync, and inbox baseline for Gmail." "2026-04-15T23:59:59Z")
-M2=$(ensure_milestone "M2 - Intelligence v1" "Classification pipeline, AI abstraction, and persisted confidence outputs." "2026-05-15T23:59:59Z")
-M3=$(ensure_milestone "M3 - Multi-provider foundation" "Provider capabilities, abstraction hardening, and readiness for Outlook/IMAP." "2026-06-15T23:59:59Z")
+M1=$(ensure_milestone "M1 - Gmail MVP" "OAuth, provider connection, initial sync, and inbox baseline for Gmail." "$M1_DUE")
+M2=$(ensure_milestone "M2 - Intelligence v1" "Classification pipeline, AI abstraction, and persisted confidence outputs." "$M2_DUE")
+M3=$(ensure_milestone "M3 - Multi-provider foundation" "Provider capabilities, abstraction hardening, and readiness for Outlook/IMAP." "$M3_DUE")
 
-assign_issue_to_milestone 1 "M1 - Gmail MVP"
-assign_issue_to_milestone 2 "M1 - Gmail MVP"
-assign_issue_to_milestone 3 "M2 - Intelligence v1"
-assign_issue_to_milestone 4 "M3 - Multi-provider foundation"
-assign_issue_to_milestone 5 "M1 - Gmail MVP"
-assign_issue_to_milestone 6 "M1 - Gmail MVP"
-assign_issue_to_milestone 7 "M1 - Gmail MVP"
-assign_issue_to_milestone 8 "M1 - Gmail MVP"
-assign_issue_to_milestone 9 "M1 - Gmail MVP"
-assign_issue_to_milestone 10 "M1 - Gmail MVP"
-assign_issue_to_milestone 11 "M1 - Gmail MVP"
-assign_issue_to_milestone 12 "M2 - Intelligence v1"
-assign_issue_to_milestone 13 "M2 - Intelligence v1"
-assign_issue_to_milestone 14 "M2 - Intelligence v1"
-assign_issue_to_milestone 15 "M3 - Multi-provider foundation"
-assign_issue_to_milestone 16 "M3 - Multi-provider foundation"
-assign_issue_to_milestone 17 "M3 - Multi-provider foundation"
-assign_issue_to_milestone 18 "M3 - Multi-provider foundation"
+for issue in $(seq "$ISSUE_START" "$ISSUE_END"); do
+  if [[ "$issue" -eq 3 ]]; then
+    assign_issue_to_milestone "$issue" "M2 - Intelligence v1"
+  elif [[ "$issue" -eq 4 ]]; then
+    assign_issue_to_milestone "$issue" "M3 - Multi-provider foundation"
+  elif [[ "$issue" -ge 12 && "$issue" -le 14 ]]; then
+    assign_issue_to_milestone "$issue" "M2 - Intelligence v1"
+  elif [[ "$issue" -ge 15 && "$issue" -le 18 ]]; then
+    assign_issue_to_milestone "$issue" "M3 - Multi-provider foundation"
+  else
+    assign_issue_to_milestone "$issue" "M1 - Gmail MVP"
+  fi
+done
 
 echo "Milestones ready: M1=$M1 M2=$M2 M3=$M3"

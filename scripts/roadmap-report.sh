@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO="AlexanderErdelyi/smart-inbox"
-
 if ! command -v gh >/dev/null 2>&1; then
   echo "Error: GitHub CLI (gh) is required."
   exit 1
@@ -10,6 +8,12 @@ fi
 
 if ! gh auth status >/dev/null 2>&1; then
   echo "Error: gh is not authenticated. Run: gh auth login"
+  exit 1
+fi
+
+REPO="${REPO:-$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || true)}"
+if [[ -z "${REPO}" ]]; then
+  echo "Error: Could not determine repository. Set REPO=owner/name."
   exit 1
 fi
 
